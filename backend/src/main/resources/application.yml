@@ -1,0 +1,38 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: blade-monitor
+  websocket:
+    timeout: 600000
+
+app:
+  simulator:
+    enabled: true
+  udp:
+    port: 9000
+    buffer-size: 65536
+    socket-receive-buffer: 104857600
+    selector-timeout-ms: 10
+  buffer:
+    ring-buffer-size: 65536
+  fft:
+    window-size: 1024
+    overlap: 0.5
+    sample-rate: 10000
+    low-cut-freq: 10.0
+    high-cut-freq: 2000.0
+  websocket:
+    broadcast-interval-ms: 16
+    max-clients: 32
+  data:
+    blade-count: 24
+    max-rpm: 20000
+
+logging:
+  level:
+    com.aero.blademonitor: INFO
+    org.springframework: WARN
