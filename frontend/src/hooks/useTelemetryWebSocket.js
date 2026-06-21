@@ -53,6 +53,32 @@ export function useTelemetryWebSocket() {
     wsClientCount: 0
   });
 
+  const [fatigueData, setFatigueData] = useState({
+    bladeIndex: 0,
+    damageRatio: 0,
+    maxAmplitude: 0,
+    totalCycles: 0,
+    severity: 'NORMAL',
+    totalCyclesProcessed: 0,
+    timestamp: 0
+  });
+
+  const [fatigueWarning, setFatigueWarning] = useState({
+    active: false,
+    severity: 'NORMAL',
+    bladeIndex: 0,
+    damageRatio: 0,
+    maxAmplitude: 0,
+    avgAmplitude: 0,
+    cycleCount: 0,
+    rpm: 0,
+    timestamp: 0,
+    damageWarningThreshold: 0.7,
+    damageCriticalThreshold: 0.85,
+    strainHistory: [],
+    timeHistory: []
+  });
+
   const connect = useCallback(() => {
     manualCloseRef.current = false;
 
@@ -129,6 +155,12 @@ export function useTelemetryWebSocket() {
         break;
       case 'metrics':
         handleMetrics(msg);
+        break;
+      case 'fatigue_warning':
+        handleFatigueWarning(msg);
+        break;
+      case 'fatigue_metrics':
+        handleFatigueMetrics(msg);
         break;
       default:
         break;
@@ -207,6 +239,41 @@ export function useTelemetryWebSocket() {
     }
   }, []);
 
+  const handleFatigueWarning = useCallback((msg) => {
+    setFatigueWarning({
+      active: true,
+      severity: msg.severity || 'WARNING',
+      bladeIndex: msg.bladeIndex ?? 0,
+      damageRatio: msg.damageRatio ?? 0,
+      maxAmplitude: msg.maxAmplitude ?? 0,
+      avgAmplitude: msg.avgAmplitude ?? 0,
+      cycleCount: msg.cycleCount ?? 0,
+      rpm: msg.rpm ?? 0,
+      timestamp: msg.timestamp ?? Date.now(),
+      damageWarningThreshold: msg.damageWarningThreshold ?? 0.7,
+      damageCriticalThreshold: msg.damageCriticalThreshold ?? 0.85,
+      strainHistory: msg.strainHistory || [],
+      timeHistory: msg.timeHistory || []
+    });
+  }, []);
+
+  const handleFatigueMetrics = useCallback((msg) => {
+    setFatigueData({
+      bladeIndex: msg.bladeIndex ?? 0,
+      damageRatio: msg.damageRatio ?? 0,
+      maxAmplitude: msg.maxAmplitude ?? 0,
+      totalCycles: msg.totalCycles ?? 0,
+      severity: msg.severity || 'NORMAL',
+      totalCyclesProcessed: msg.totalCyclesProcessed ?? 0,
+      timestamp: msg.timestamp ?? Date.now()
+    });
+  }, []);
+
+  const acknowledgeFatigueWarning = useCallback(() => {
+    setFatigueWarning(prev => ({ ...prev, active: false }));
+    fetch('/api/fatigue/acknowledge', { method: 'POST' }).catch(() => {});
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (campbellPointsRef.current.length > 0) {
@@ -248,6 +315,9 @@ export function useTelemetryWebSocket() {
     campbellPoints: campbellSnapshot,
     frameHistory: frameHistorySnapshot,
     metrics,
+    fatigueData,
+    fatigueWarning,
+    acknowledgeFatigueWarning,
     clearAllData
   };
 }

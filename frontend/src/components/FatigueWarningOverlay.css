@@ -1,0 +1,312 @@
+.fatigue-warning-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.warning-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: borderPulse 0.5s ease-in-out infinite alternate;
+}
+
+.border-line {
+  position: absolute;
+  background: linear-gradient(90deg, #ffd700, #ffee00, #ffd700);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4);
+  transition: all 0.1s ease;
+}
+
+.border-line.top {
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, #ffd700, #ffee00, #ffd700, transparent);
+}
+
+.border-line.bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, #ffd700, #ffee00, #ffd700, transparent);
+}
+
+.border-line.left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent, #ffd700, #ffee00, #ffd700, transparent);
+}
+
+.border-line.right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent, #ffd700, #ffee00, #ffd700, transparent);
+}
+
+@keyframes borderPulse {
+  0% {
+    opacity: 0.6;
+    filter: brightness(1);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1.3);
+  }
+}
+
+.warning-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 680px;
+  max-width: 90vw;
+  max-height: 85vh;
+  background: rgba(10, 25, 41, 0.98);
+  border: 2px solid #ffd700;
+  border-radius: 12px;
+  box-shadow: 0 0 60px rgba(255, 215, 0, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8);
+  pointer-events: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.modal-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.1));
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.warning-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 215, 0, 0.15);
+  border-radius: 50%;
+  animation: iconPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes iconPulse {
+  from {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  to {
+    transform: scale(1.1);
+    filter: brightness(1.3);
+  }
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffd700;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+
+.modal-header p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: rgba(255, 215, 0, 0.6);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  letter-spacing: 1.5px;
+}
+
+.modal-body {
+  padding: 20px 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.damage-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.damage-metrics .metric {
+  background: rgba(255, 215, 0, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.damage-metrics .metric-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.damage-metrics .metric-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.damage-metrics .metric-value.critical {
+  color: #ff6384;
+  text-shadow: 0 0 10px rgba(255, 99, 132, 0.5);
+}
+
+.damage-metrics .metric-value.warning {
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.metric-bar {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: visible;
+}
+
+.metric-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.threshold-marker {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 10px;
+  transform: translateX(-50%);
+}
+
+.threshold-marker.warning {
+  background: #ffd700;
+}
+
+.threshold-marker.critical {
+  background: #ff6384;
+  z-index: 1;
+}
+
+.waveform-section {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.section-title span:first-child {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.section-subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  letter-spacing: 1px;
+}
+
+.waveform-canvas {
+  width: 100%;
+  height: 180px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 6px;
+  background: rgba(10, 25, 41, 0.5);
+}
+
+.warning-message {
+  background: rgba(255, 99, 132, 0.1);
+  border: 1px solid rgba(255, 99, 132, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.warning-message p {
+  margin: 0;
+  font-size: 13px;
+  color: #ffc8d0;
+  line-height: 1.6;
+}
+
+.warning-message strong {
+  color: #ff6384;
+  font-weight: 700;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-shutdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #ff6384, #ff0040);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 99, 132, 0.4);
+}
+
+.btn-shutdown:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 99, 132, 0.5);
+  filter: brightness(1.1);
+}
+
+.btn-acknowledge {
+  padding: 10px 20px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-acknowledge:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.4);
+}

@@ -16,6 +16,7 @@ public class AppProperties {
     private DataProperties data = new DataProperties();
     private SimulatorProperties simulator = new SimulatorProperties();
     private PersistenceProperties persistence = new PersistenceProperties();
+    private FatigueProperties fatigue = new FatigueProperties();
 
     @Data
     public static class UdpProperties {
@@ -65,5 +66,19 @@ public class AppProperties {
         private int maxQueueSize = 100000;
         private long flushIntervalMs = 500;
         private double rpmThreshold = 1000;
+    }
+
+    @Data
+    public static class FatigueProperties {
+        private boolean enabled = true;
+        private double damageWarningThreshold = 0.7;
+        private double damageCriticalThreshold = 0.85;
+        private double maxAmplitudeWarning = 400.0;
+        private double maxAmplitudeCritical = 600.0;
+        private double fatigueLimitStrain = 500.0;
+        private double cyclesToFailure = 10000000.0;
+        private double snExponent = 5.0;
+        private int minCycleBatchSize = 100;
+        private long warningCooldownMs = 5000;
     }
 }

@@ -3,6 +3,7 @@ import { useTelemetryWebSocket } from './hooks/useTelemetryWebSocket';
 import CampbellDiagram from './components/CampbellDiagram';
 import SpectrumChart from './components/SpectrumChart';
 import StrainWaveform from './components/StrainWaveform';
+import FatigueWarningOverlay from './components/FatigueWarningOverlay';
 
 function formatNum(n, decimals = 0) {
   if (n === null || n === undefined || isNaN(n)) return '-';
@@ -20,6 +21,9 @@ export default function App() {
     campbellPoints,
     frameHistory,
     metrics,
+    fatigueData,
+    fatigueWarning,
+    acknowledgeFatigueWarning,
     clearAllData
   } = useTelemetryWebSocket();
 
@@ -215,6 +219,39 @@ export default function App() {
                 </div>
                 <div className="metric-unit">Buffer Depth</div>
               </div>
+              <div className="metric-item">
+                <div className="metric-label">疲劳累积损伤</div>
+                <div className="metric-value" style={{
+                  color: fatigueData?.severity === 'CRITICAL' ? 'var(--accent-red)'
+                    : fatigueData?.severity === 'WARNING' ? '#ffd700'
+                    : 'var(--accent-green)'
+                }}>
+                  {fatigueData?.damageRatio !== undefined
+                    ? (fatigueData.damageRatio * 100).toFixed(2)
+                    : '0.00'}%
+                </div>
+                <div className="metric-unit">
+                  Miner Damage · #{fatigueData?.bladeIndex ?? 0}
+                </div>
+              </div>
+              <div className="metric-item">
+                <div className="metric-label">最大应变幅值</div>
+                <div className="metric-value" style={{
+                  color: (fatigueData?.maxAmplitude || 0) > 350 ? 'var(--accent-red)'
+                    : (fatigueData?.maxAmplitude || 0) > 250 ? '#ffd700'
+                    : 'var(--accent-cyan)'
+                }}>
+                  {fatigueData?.maxAmplitude !== undefined
+                    ? fatigueData.maxAmplitude.toFixed(1)
+                    : '-'}
+                </div>
+                <div className="metric-unit">με · Peak Strain</div>
+              </div>
+              <div className="metric-item">
+                <div className="metric-label">雨流循环计数</div>
+                <div className="metric-value pkts">{formatNum(fatigueData?.totalCycles)}</div>
+                <div className="metric-unit">Rainflow Cycles</div>
+              </div>
             </div>
           </div>
         </div>
@@ -263,6 +300,16 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      <FatigueWarningOverlay
+        warning={fatigueWarning}
+        onAcknowledge={acknowledgeFatigueWarning}
+        onShutdown={() => {
+          if (confirm('确认执行停机操作？此操作将触发安全停机程序。')) {
+            acknowledgeFatigueWarning();
+          }
+        }}
+      />
     </div>
   );
 }

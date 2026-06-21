@@ -124,4 +124,12 @@ public class WebSocketBroadcaster {
     public void broadcastJson(TelemetryMessage message) {
         sendJson(message);
     }
+
+    public void broadcastRawJson(String json) {
+        try {
+            webSocketHandler.broadcast(json);
+        } catch (Exception e) {
+            log.warn("Failed to broadcast raw JSON", e);
+        }
+    }
 }

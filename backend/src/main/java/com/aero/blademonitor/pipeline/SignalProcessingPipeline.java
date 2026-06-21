@@ -4,6 +4,7 @@ import com.aero.blademonitor.buffer.BackpressureLevel;
 import com.aero.blademonitor.buffer.DisruptorBufferManager;
 import com.aero.blademonitor.buffer.RawPacketPool;
 import com.aero.blademonitor.dto.TelemetryMessage;
+import com.aero.blademonitor.fatigue.FatigueWarningService;
 import com.aero.blademonitor.model.BladeDataFrame;
 import com.aero.blademonitor.model.CampbellPoint;
 import com.aero.blademonitor.model.FftResult;
@@ -37,6 +38,7 @@ public class SignalProcessingPipeline {
     private final AsyncPersistenceService persistenceService;
     private final NioUdpReceiver udpReceiver;
     private final RawPacketPool packetPool;
+    private final FatigueWarningService fatigueWarningService;
 
     private final BlockingQueue<BladeDataFrame> parsedFramesForFft = new LinkedBlockingQueue<>();
     private final BlockingQueue<BladeDataFrame> parsedFramesForBroadcast = new LinkedBlockingQueue<>();
@@ -61,7 +63,8 @@ public class SignalProcessingPipeline {
             WebSocketBroadcaster broadcaster,
             AsyncPersistenceService persistenceService,
             NioUdpReceiver udpReceiver,
-            RawPacketPool packetPool) {
+            RawPacketPool packetPool,
+            FatigueWarningService fatigueWarningService) {
         this.bufferManager = bufferManager;
         this.parser = parser;
         this.fftProcessor = fftProcessor;
@@ -69,6 +72,7 @@ public class SignalProcessingPipeline {
         this.persistenceService = persistenceService;
         this.udpReceiver = udpReceiver;
         this.packetPool = packetPool;
+        this.fatigueWarningService = fatigueWarningService;
     }
 
     @PostConstruct
@@ -96,6 +100,8 @@ public class SignalProcessingPipeline {
                     if (!frame.isValid()) continue;
 
                     totalFrames.incrementAndGet();
+
+                    fatigueWarningService.processFrame(frame);
 
                     if (!parsedFramesForFft.offer(frame)) {
                     }

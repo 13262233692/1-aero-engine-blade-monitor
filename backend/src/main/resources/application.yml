@@ -39,6 +39,17 @@ app:
     max-queue-size: 100000
     flush-interval-ms: 500
     rpm-threshold: 1000
+  fatigue:
+    enabled: true
+    damage-warning-threshold: 0.001
+    damage-critical-threshold: 0.005
+    max-amplitude-warning: 100.0
+    max-amplitude-critical: 200.0
+    fatigue-limit-strain: 500.0
+    cycles-to-failure: 10000000.0
+    sn-exponent: 5.0
+    min-cycle-batch-size: 100
+    warning-cooldown-ms: 5000
 
 logging:
   level:
