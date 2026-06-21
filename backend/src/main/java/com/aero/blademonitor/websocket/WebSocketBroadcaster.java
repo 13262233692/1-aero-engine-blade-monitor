@@ -116,4 +116,12 @@ public class WebSocketBroadcaster {
     public int getClientCount() {
         return webSocketHandler.getClientCount();
     }
+
+    public boolean hasClients() {
+        return webSocketHandler.hasClients();
+    }
+
+    public void broadcastJson(TelemetryMessage message) {
+        sendJson(message);
+    }
 }

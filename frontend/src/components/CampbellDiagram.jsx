@@ -419,6 +419,8 @@ function drawBladePassingFreqLine(ctx, padLeft, plotW, padTop, plotH, maxRpm, ma
 
 function drawResonanceDangerZones(ctx, padLeft, plotW, padTop, plotH, maxRpm, maxFreq,
                                    rpmToX, freqToY) {
+  if (plotW <= 0 || plotH <= 0) return;
+
   ctx.save();
   ctx.beginPath();
   ctx.rect(padLeft, padTop, plotW, plotH);
@@ -431,9 +433,10 @@ function drawResonanceDangerZones(ctx, padLeft, plotW, padTop, plotH, maxRpm, ma
 
       const x0 = rpmToX(resonanceRpm);
       const y0 = freqToY(nf.freq);
-      const halfWidth = plotW * 0.025;
+      const halfWidth = Math.max(1, plotW * 0.025);
+      const outerRadius = Math.max(1, halfWidth * 2);
 
-      const zoneGrad = ctx.createRadialGradient(x0, y0, 0, x0, y0, halfWidth * 2);
+      const zoneGrad = ctx.createRadialGradient(x0, y0, 0, x0, y0, outerRadius);
       zoneGrad.addColorStop(0, 'rgba(255, 61, 87, 0.25)');
       zoneGrad.addColorStop(0.5, 'rgba(255, 61, 87, 0.08)');
       zoneGrad.addColorStop(1, 'rgba(255, 61, 87, 0)');

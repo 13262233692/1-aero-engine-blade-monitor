@@ -14,6 +14,8 @@ public class AppProperties {
     private FftProperties fft = new FftProperties();
     private WebsocketProperties websocket = new WebsocketProperties();
     private DataProperties data = new DataProperties();
+    private SimulatorProperties simulator = new SimulatorProperties();
+    private PersistenceProperties persistence = new PersistenceProperties();
 
     @Data
     public static class UdpProperties {
@@ -47,5 +49,21 @@ public class AppProperties {
     public static class DataProperties {
         private int bladeCount = 24;
         private int maxRpm = 20000;
+    }
+
+    @Data
+    public static class SimulatorProperties {
+        private boolean enabled = true;
+        private int targetPps = 150000;
+        private boolean rpmRampMode = true;
+    }
+
+    @Data
+    public static class PersistenceProperties {
+        private boolean enabled = true;
+        private int batchSize = 1000;
+        private int maxQueueSize = 100000;
+        private long flushIntervalMs = 500;
+        private double rpmThreshold = 1000;
     }
 }

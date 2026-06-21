@@ -12,6 +12,8 @@ spring:
 app:
   simulator:
     enabled: true
+    target-pps: 150000
+    rpm-ramp-mode: true
   udp:
     port: 9000
     buffer-size: 65536
@@ -31,6 +33,12 @@ app:
   data:
     blade-count: 24
     max-rpm: 20000
+  persistence:
+    enabled: true
+    batch-size: 1000
+    max-queue-size: 100000
+    flush-interval-ms: 500
+    rpm-threshold: 1000
 
 logging:
   level:
